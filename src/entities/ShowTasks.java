@@ -4,14 +4,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JOptionPane;
 
-import entitiesenum.TaskPriority;
-import entitiesenum.TaskStatus;
 import filemanipulation.ChooseFile;
 
 public class ShowTasks {
@@ -19,20 +16,20 @@ public class ShowTasks {
 	static String caminho = ChooseFile.path();
 
 	public static void showTasks() {
-		DateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+		String nome, descricao, linha = " ", priority, status, inicialDate,finalDate;
+
 		try {
 			String caminho = ChooseFile.path();
 			BufferedReader arqentrada;
 			arqentrada = new BufferedReader(new FileReader(caminho));
 
-			String nome = JOptionPane.showInputDialog("Digite o nome da tarefa para buscar");
-			// nome = nome.toUpperCase();
-			String linha, descricao = "", finalDate = "";
-			Date finalDate1 = null, inicialDate = null;
-			TaskPriority priority2 = null;;
-			TaskStatus status = null;
+			nome = JOptionPane.showInputDialog("Digite o nome da tarefa para buscar");
 
-			String strDate = dateFormat.format(finalDate1);
+			finalDate = JOptionPane
+					.showInputDialog("Digite a data de término da tarefa, com o horário (DD/MM/YYYY HH:MM)");
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+			LocalDateTime finalDate1 = LocalDateTime.parse(finalDate, formatter);
 
 			while ((linha = arqentrada.readLine()) != null) {
 				memoria.append(linha + "\r\n");
@@ -48,49 +45,46 @@ public class ShowTasks {
 				ultimo = memoria.indexOf("\t", primeiro);
 				descricao = lerTarefas(primeiro, ultimo);
 				primeiro = ultimo + 1;
-				//finalDate = lerTarefas(primeiro, ultimo);
-				//primeiro = ultimo + 1;
-				/*
+
+				ultimo = memoria.indexOf("\t", primeiro);
+				finalDate = lerTarefas(primeiro, ultimo);
+				primeiro = ultimo + 1;
+
+				ultimo = memoria.indexOf("\t", primeiro);
 				inicialDate = lerTarefas(primeiro, ultimo);
 				primeiro = ultimo + 1;
-				priority2 = lerTarefas(primeiro, ultimo);
+
+				ultimo = memoria.indexOf("\t", primeiro);
+				priority = lerTarefas(primeiro, ultimo);
 				primeiro = ultimo + 1;
-				*/
+
 				int fim = memoria.indexOf("\n", primeiro);
-				
-				//finalDate = lerTarefas(primeiro, fim);
-				
-				
-				TaskRecord taskRecord = new TaskRecord(nome, descricao, finalDate1, inicialDate, priority2, status);
+				status = lerTarefas(primeiro, fim);
 
-				JOptionPane.showMessageDialog(null, taskRecord.getNome() + "\n" + taskRecord.getDescricao() + "\n" +
-						taskRecord.getFinalDate());
+				TaskRecord taskRecord = new TaskRecord(nome, descricao, finalDate, inicialDate, priority, status);
 
-				/*
-				JOptionPane.showMessageDialog(null, taskRecord.getNome() + "\n" + taskRecord.getDescricao() + "\n" +
-						taskRecord.getFinalDate() + "\n" + taskRecord.getPriority() + "\n" + taskRecord.getStatus());
-				*/
-				checkStatus(finalDate1);
-				
-				if (checkStatus(finalDate1) != TaskStatus.EM_PROGRESSO) {
-					taskRecord.setStatus(status);
+			JOptionPane.showMessageDialog(null, "Nome da tarefa: " + taskRecord.getNome() + "\n" + "Descrição: " + taskRecord.getDescricao() + "\n"
+					+ "Data de finalização: " + taskRecord.getFinalDate() + "\n" + "Data de inicialização: " + taskRecord.getInitialDate() + "\n"
+					+ "Prioridade: " + taskRecord.getPriority() + "\n" + "Status: " + taskRecord.getStatus() + "\r\n");
+
+				if (checkStatus(finalDate1) != "EM PROGRESSO") {
+					taskRecord.setStatus("EM PROGRESSO");
 					memoria.replace(inicio, fim + 1,
-							taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t" + taskRecord.getFinalDate() + "\r\n");
+							taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t" + taskRecord.getFinalDate()
+									+ "\t" + taskRecord.getInitialDate() + "\t" + taskRecord.getPriority() + "\t"
+									+ taskRecord.getStatus() + "\r\n");
 					gravar();
-					
+
 				}
-				/*
-				JOptionPane.showMessageDialog(null, taskRecord.getNome() + "\n" + taskRecord.getDescricao() + "\n",
-						taskRecord.getFinalDate() + "\n", taskRecord.getInitialDate() + "\n",
-						taskRecord.getPriority() + "\n", taskRecord.getStatus() + "\n");
-					*/
+
 			} else {
 				JOptionPane.showMessageDialog(null, "Tarefa não cadastrada");
 			}
 			arqentrada.close();
 
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Erro de leitura");
+			JOptionPane.showMessageDialog(null, "Erro de leitura, você digitou corretamente?");
+			System.out.println(e);
 		}
 	}
 
@@ -100,19 +94,21 @@ public class ShowTasks {
 		return tarefas;
 	}
 
-	public static TaskStatus checkStatus(Date finalDate1) {
-		Date currentDate = new Date(System.currentTimeMillis());
-		TaskStatus status;
+	public static String checkStatus(LocalDateTime finalDate1) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+		LocalDateTime currentDate = LocalDateTime.now();
+		String inicialDate1 = currentDate.format(formatter);
+		String status;
 
-		if (currentDate.after(finalDate1)) {
-			status = TaskStatus.EXPIRADA;
+		if (currentDate.isBefore(finalDate1)) {
+			status = "EXPIRADA";
 		} else {
-			status = TaskStatus.EM_PROGRESSO;
+			status = "EM PROGRESSO";
 		}
 
 		return status;
 	}
-	
+
 	public static void gravar() {
 		try {
 			BufferedWriter saida;

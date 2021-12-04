@@ -3,13 +3,12 @@ package entities;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.RandomAccessFile;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JOptionPane;
 
-import entitiesenum.TaskPriority;
-import entitiesenum.TaskStatus;
 import filemanipulation.ChooseFile;
 
 public class NewTasks {
@@ -18,14 +17,13 @@ public class NewTasks {
 
 	public static void newTasks() {
 		String nome, descricao, finalDate;
-		SimpleDateFormat parseDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		//SimpleDateFormat parseDate = new SimpleDateFormat("dd/MM/yyyy");
-		
-		try {
 
+		try {
+/*
 			JOptionPane.showMessageDialog(null, "Escolha onde onde as tarefas ficarão armazenadas", "Atenção",
 					JOptionPane.WARNING_MESSAGE);
-
+*/
+		//	String caminho = ChooseFile.path();
 			String caminho = ChooseFile.path();
 			BufferedWriter saida;
 			saida = new BufferedWriter(new FileWriter(caminho, true));
@@ -34,30 +32,33 @@ public class NewTasks {
 
 			descricao = JOptionPane.showInputDialog("Digite a descrição da tarefa");
 
-			finalDate = JOptionPane.showInputDialog("Digite a data de término da tarefa, com o horário");
+			finalDate = JOptionPane
+					.showInputDialog("Digite a data de término da tarefa, com o horário (DD/MM/YYYY HH:MM)");
 
-			Date finalDate1 = parseDate.parse(finalDate);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+			LocalDateTime finalDate1 = LocalDateTime.parse(finalDate, formatter);
 
 			// captura a data do sistema, sendo a data inicial da tarefa.
-			Date inicialDate = new Date(System.currentTimeMillis());
+			LocalDateTime inicialDate = LocalDateTime.now();
+			String inicialDate1 = inicialDate.format(formatter);
 
-			while (finalDate1.before(inicialDate)) {
+			while (finalDate1.isBefore(inicialDate)) {
 				finalDate = JOptionPane.showInputDialog("A data de término deve ser depois da data de hoje.");
-				finalDate1 = parseDate.parse(finalDate);
+				formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+				finalDate1 = LocalDateTime.parse(finalDate, formatter);
 			}
 
-
+			Object[] chooseStatus = { "Baixa", "Media", "Alta" };
 			Object priority = JOptionPane.showInputDialog(null, "Selecione a prioridade da tarefa",
-					"Prioridade da tarefa", JOptionPane.INFORMATION_MESSAGE, null, TaskPriority.values(),
-					TaskPriority.values()[0]);
+					"Prioridade da tarefa", JOptionPane.INFORMATION_MESSAGE, null, chooseStatus, chooseStatus[0]);
 
-			// gambiarra
-			TaskPriority priority2 = (TaskPriority) priority;
+			// passa o objeto para String para armazenar
+			String priority1 = (String) chooseStatus[0];
 
 			// inicia a tarefa com o status padrão "iniciada"
-			TaskStatus status = TaskStatus.INICIADA;
+			String status = "INICIADA";
 
-			TaskRecord taskRecord = new TaskRecord(nome, descricao, finalDate1, inicialDate, priority2, status);
+			TaskRecord taskRecord = new TaskRecord(nome, descricao, finalDate, inicialDate1, priority1, status);
 
 			saida.write(taskRecord.getNome() + "\t");
 			saida.write(taskRecord.getDescricao() + "\t");

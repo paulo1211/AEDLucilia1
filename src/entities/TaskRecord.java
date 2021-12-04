@@ -1,19 +1,15 @@
 package entities;
-import java.util.Date;
-
-import entitiesenum.TaskPriority;
-import entitiesenum.TaskStatus;
 
 public class TaskRecord {
 	private String nome;
 	private String descricao;
-	private Date finalDate;
-	private Date initialDate;
-	private TaskPriority priority;
-	private TaskStatus status;
+	private String finalDate;
+	private String initialDate;
+	private String priority;
+	private String status;
 
-	public TaskRecord(String nome, String descricao, Date finalDate, Date inicialDate, TaskPriority priority,
-			TaskStatus status) {
+	public TaskRecord(String nome, String descricao, String finalDate, String inicialDate, String priority,
+			String status) {
 		this.nome = nome;
 		this.descricao = descricao;
 		this.finalDate = finalDate;
@@ -38,35 +34,35 @@ public class TaskRecord {
 		this.descricao = descricao;
 	}
 
-	public Date getFinalDate() {
+	public String getFinalDate() {
 		return finalDate;
 	}
 
-	public void setFinalDate(Date finalDate) {
+	public void setFinalDate(String finalDate) {
 		this.finalDate = finalDate;
 	}
 
-	public Date getInitialDate() {
+	public String getInitialDate() {
 		return initialDate;
 	}
 
-	public void setInitialDate(Date initialDate) {
+	public void setInitialDate(String initialDate) {
 		this.initialDate = initialDate;
 	}
 
-	public TaskPriority getPriority() {
+	public String getPriority() {
 		return priority;
 	}
 
-	public void setPriority(TaskPriority priority) {
+	public void setPriority(String priority) {
 		this.priority = priority;
 	}
 
-	public TaskStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(TaskStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
