@@ -3,7 +3,6 @@ package entities;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.RandomAccessFile;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,17 +18,15 @@ public class NewTasks {
 		String nome, descricao, finalDate;
 
 		try {
-/*
 			JOptionPane.showMessageDialog(null, "Escolha onde onde as tarefas ficarão armazenadas", "Atenção",
 					JOptionPane.WARNING_MESSAGE);
-*/
-		//	String caminho = ChooseFile.path();
+
 			String caminho = ChooseFile.path();
 			BufferedWriter saida;
 			saida = new BufferedWriter(new FileWriter(caminho, true));
 
 			nome = JOptionPane.showInputDialog("Digite o nome da tarefa");
-
+			
 			descricao = JOptionPane.showInputDialog("Digite a descrição da tarefa");
 
 			finalDate = JOptionPane
@@ -41,7 +38,8 @@ public class NewTasks {
 			// captura a data do sistema, sendo a data inicial da tarefa.
 			LocalDateTime inicialDate = LocalDateTime.now();
 			String inicialDate1 = inicialDate.format(formatter);
-
+			
+			
 			while (finalDate1.isBefore(inicialDate)) {
 				finalDate = JOptionPane.showInputDialog("A data de término deve ser depois da data de hoje.");
 				formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -53,7 +51,7 @@ public class NewTasks {
 					"Prioridade da tarefa", JOptionPane.INFORMATION_MESSAGE, null, chooseStatus, chooseStatus[0]);
 
 			// passa o objeto para String para armazenar
-			String priority1 = (String) chooseStatus[0];
+			String priority1 = (String) priority;
 
 			// inicia a tarefa com o status padrão "iniciada"
 			String status = "INICIADA";

@@ -17,14 +17,17 @@ public class ChangeTasks {
 
 	public static void changeTasks() {
 		String nome, descricao, linha = " ", priority, status, finalDate, inicialDate;
-	
+
 		try {
 			String caminho = ChooseFile.path();
 			BufferedReader arqentrada;
 			arqentrada = new BufferedReader(new FileReader(caminho));
 
 			nome = JOptionPane.showInputDialog("Digite o nome da tarefa que quer mudar");
-			finalDate = JOptionPane.showInputDialog("Digite a data de término da tarefa, com o horário (DD/MM/YYYY HH:MM)");
+			finalDate = JOptionPane
+					.showInputDialog("Digite a data de término da tarefa, com o horário (DD/MM/YYYY HH:MM)");
+
+			int finalizada = JOptionPane.showConfirmDialog(null, "A tarefa " + nome + " foi finalizada?");
 
 			while ((linha = arqentrada.readLine()) != null) {
 				memoria.append(linha + "\r\n");
@@ -55,28 +58,42 @@ public class ChangeTasks {
 
 				int fim = memoria.indexOf("\n", primeiro);
 				status = lerTarefas(primeiro, fim);
-			
+
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 				LocalDateTime finalDate1 = LocalDateTime.parse(finalDate, formatter);
 				LocalDateTime inicialDate1 = LocalDateTime.parse(inicialDate, formatter);
-				
+
 				TaskRecord taskRecord = new TaskRecord(nome, descricao, finalDate, inicialDate, priority, status);
 
-				nome = JOptionPane.showInputDialog("Entre com o novo nome da tarefa");
-				taskRecord.setNome(nome);
-				
-				descricao = JOptionPane.showInputDialog("Entre com a nova descrição da tarefa");
-				taskRecord.setDescricao(descricao);
-				
-				finalDate = JOptionPane.showInputDialog("Entre com a nova data de término, com o horário (DD/MM/YYYY HH:MM)");
-				taskRecord.setFinalDate(finalDate);
-				
-				priority = JOptionPane.showInputDialog("Entre com a nova prioridade");
-				taskRecord.setPriority(priority);
-				
-				
-				memoria.replace(inicio, fim + 1, taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t"
-						+ taskRecord.getFinalDate() + "\t"+ taskRecord.getPriority() + "\r\n");
+				if (finalizada == 1) {
+					nome = JOptionPane.showInputDialog("Entre com o novo nome da tarefa");
+					taskRecord.setNome(nome);
+
+					descricao = JOptionPane.showInputDialog("Entre com a nova descrição da tarefa");
+					taskRecord.setDescricao(descricao);
+
+					finalDate = JOptionPane
+							.showInputDialog("Entre com a nova data de término, com o horário (DD/MM/YYYY HH:MM)");
+					taskRecord.setFinalDate(finalDate);
+
+					priority = JOptionPane.showInputDialog("Entre com a nova prioridade");
+					taskRecord.setPriority(priority);
+
+					memoria.replace(inicio, fim + 1,
+							taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t" + taskRecord.getFinalDate()
+									+ "\t" + taskRecord.getInitialDate() + "\t" + taskRecord.getPriority() + "\t"
+									+ taskRecord.getStatus() + "\r\n");
+				} else {
+					if (finalizada == 0) {
+						status = "FINALIZADA";
+						memoria.replace(inicio, fim + 1,
+								taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t"
+										+ taskRecord.getFinalDate() + "\t" + taskRecord.getInitialDate() + "\t"
+										+ taskRecord.getPriority() + "\t" + taskRecord.getStatus() + "\r\n");
+						JOptionPane.showMessageDialog(null, "Tarefa Finalizada", "Atenção",
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
 				gravar();
 
 				JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso");
