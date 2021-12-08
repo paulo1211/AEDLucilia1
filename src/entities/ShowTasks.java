@@ -16,7 +16,7 @@ public class ShowTasks {
 	static String caminho = ChooseFile.path();
 
 	public static void showTasks() {
-		String nome, descricao, linha = " ", priority, status, inicialDate,finalDate;
+		String nome, descricao, linha = " ", priority, status, inicialDate, finalDate;
 
 		try {
 			String caminho = ChooseFile.path();
@@ -63,9 +63,11 @@ public class ShowTasks {
 
 				TaskRecord taskRecord = new TaskRecord(nome, descricao, finalDate, inicialDate, priority, status);
 
-			JOptionPane.showMessageDialog(null, "Nome da tarefa: " + taskRecord.getNome() + "\n" + "Descrição: " + taskRecord.getDescricao() + "\n"
-					+ "Data de finalização: " + taskRecord.getFinalDate() + "\n" + "Data de inicialização: " + taskRecord.getInitialDate() + "\n"
-					+ "Prioridade: " + taskRecord.getPriority() + "\n" + "Status: " + taskRecord.getStatus() + "\r\n");
+				JOptionPane.showMessageDialog(null,
+						"Nome da tarefa: " + taskRecord.getNome() + "\n" + "Descrição: " + taskRecord.getDescricao()
+								+ "\n" + "Data de finalização: " + taskRecord.getFinalDate() + "\n"
+								+ "Data de inicialização: " + taskRecord.getInitialDate() + "\n" + "Prioridade: "
+								+ taskRecord.getPriority() + "\n" + "Status: " + taskRecord.getStatus() + "\r\n");
 
 				if (checkStatus(finalDate1) != "EM PROGRESSO") {
 					taskRecord.setStatus("EM PROGRESSO");
@@ -73,6 +75,17 @@ public class ShowTasks {
 							taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t" + taskRecord.getFinalDate()
 									+ "\t" + taskRecord.getInitialDate() + "\t" + taskRecord.getPriority() + "\t"
 									+ taskRecord.getStatus() + "\r\n");
+
+					//verifica se a data de expiração é anterior a data atual do sistema
+					LocalDateTime currentDateValidation = LocalDateTime.now();
+					if (finalDate1.isBefore(currentDateValidation)) {
+						taskRecord.setStatus("EXPIRADA");
+						memoria.replace(inicio, fim + 1,
+								taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t" + taskRecord.getFinalDate()
+										+ "\t" + taskRecord.getInitialDate() + "\t" + taskRecord.getPriority() + "\t"
+										+ taskRecord.getStatus() + "\r\n");
+					}
+
 					gravar();
 
 				}
