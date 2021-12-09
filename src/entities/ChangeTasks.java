@@ -86,6 +86,7 @@ public class ChangeTasks {
 				} else {
 					if (finalizada == 0) {
 						status = "FINALIZADA";
+						taskRecord.setStatus(status);
 						memoria.replace(inicio, fim + 1,
 								taskRecord.getNome() + "\t" + taskRecord.getDescricao() + "\t"
 										+ taskRecord.getFinalDate() + "\t" + taskRecord.getInitialDate() + "\t"
